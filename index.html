@@ -556,6 +556,7 @@
                     <ul class="nav-links">
                         <li><a href="#home" data-section="home" class="active" onclick="navigate('home'); return false;">Home</a></li>
                         <li><a href="#live-tv" data-section="live-tv" onclick="navigate('live-tv'); return false;">Live TV</a></li>
+                        <li><a href="controll.html" data-section="controll" onclick="controll.html">Controll panell</a></a></li>
                         <li><a href="download.html" data-section="download" onclick="download.html">App download</a></a></li>
                         <li><a href="#plans" data-section="plans" onclick="navigate('plans'); return false;">Packages</a></li>
                         <li><a href="#devices" data-section="devices" onclick="navigate('devices'); return false;">Devices</a></li>
@@ -888,31 +889,6 @@
         // [5.1] M3U Playlist Content (Logos added for correct parser demo)
         const m3uContent = `
 #EXTM3U
-#EXTINF:-1 tvg-logo="https://i.ibb.co/rGPFbMs8/mitv.png"group-title="Radio📻", Quran radio 🔘 
-#EXTVLCOPT:video-filter=scene
-http://otv.to:80/03062015326/123456/206282
-#EXTINF:-1 tvg-id="peghamQuran.pk@SD" tvg-logo="https://is1-ssl.mzstatic.com/image/thumb/Purple123/v4/27/35/2a/27352ae4-81d0-61c4-ec55-dd6be2b86ad2/AppIcon-0-0-1x_U007emarketing-0-0-0-5-0-85-220.png/1200x630wa.jpg" group-title="Religion: Islam",Quran tv Pegam (Pro)
-http://66.102.120.18:8000/play/a04h/index.m3u8
-#EXTINF:-1 tvg-id="saudi.quran.makkah.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/saudi-quran-makkah-tv-hd-live.webp" group-title="Religion: Islam",Saudi Quran Makkah TV HD live
-https://cdn21lhr.tamashaweb.com:8087/jazzauth/Saudimakkah(nw)-abr/playlist.m3u8
-#EXTINF:-1 tvg-id="saudi.sunnah.madinah.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/saudi-sunnah-madinah-tv-hd-live.webp?id=17" group-title="Religion: Islam",Saudi Sunnah Madinah TV HD live
-https://cdn22lhr.tamashaweb.com:8087/jazzauth/SaudiSunnah(NW)-abr/live/vsat-149L/chunks.m3u8
-#EXTINF:-1 tvg-id="pegham.pk@SD" tvg-logo="https://i.ibb.co/gMhwDPS8/Pegamtv.jpg" group-title="Religion: Islam",Pegam TV (Pro)
-http://66.102.120.18:8000/play/a03e/index.m3u8
-#EXTINF:-1 tvg-id="peghampashto.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGlfUQ740on2LRkznYJ38bROYsoPSrTkoV_OD1IlURVQ&s=10" group-title="Religion: Islam",Pegam pashto
-http://66.102.120.18:8000/play/a04g/index.m3u8
-#EXTINF:-1 tvg-id="peace.tv.urdu.ae@SD" tvg-logo="https://i.postimg.cc/cLCfzgqB/peacetvurdu.png" group-title="Religion: Islam",Peace TV Urdu (1080p)
-https://ml-pull-dvc-myco.io:2096/PEACETV-URDU/index.m3u8
-#EXTINF:-1 tvg-id="peace.tv.en.ae@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251127%2Fmycolive-33_copy_20-1764254602627.webp&w=750&q=30" group-title="Religion: Islam",Peace TV English
-https://ml-pull-dvc-myco.io:2096/PEACETV-ENG/index.m3u8
-#EXTINF:-1 tvg-id="ptv.sports.pk@SD" tvg-logo="https://upload.wikimedia.org/wikipedia/en/e/e4/PTV_Sports.png" group-title="Sports",PTV Sports 
-https://cdn01isb.tamashaweb.com:8087/hls/106324/P9TDcaxe8iM/smil:mpfour.smil/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTIvMTQvMjAyNSA4OjEwOjM2IEFNJmhhc2hfdmFsdWU9K0hSN3lBTUJJcXRpdHhCQlVQRi8xQT09JnZhbGlkbWludXRlcz02MA%3D%3D
-#EXTINF:-1 tvg-id="a.sports.pk@SD" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/A%20Sports.png" group-title="Sports",A Sports (Pro)
-http://66.102.120.18:8000/play/a032/index.m3u8
-#EXTINF:-1 tvg-id="ten.sports.pk@SD" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/Ten%20Sports%20PK.png" group-title="Sports",Ten Sports (Pro)
-http://66.102.120.18:8000/play/a018/index.m3u8
-#EXTINF:-1 tvg-id="geo.super.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGj7f_Wn7L2Uy337D-Ruly7EYpNwIr61kW6DMyeUby5A&s=10" group-title="Sports",Geo Super
-https://ml-pull-dvc-myco.io:2096/GEO_SUPER/index.m3u8
 #EXTINF:-1 tvg-id="geo.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/geo-news-live.webp?id=52" group-title="News",GEO News
 https://cdn05khi.tamashaweb.com:8087/jazzauth/geoNews-abr/playlist.m3u8
 #EXTINF:-1 tvg-id="discovery.hd.in@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMJ-bU7at-8zBpPb6pgxLFV0Lgm3PdUvpxL2Vu0U9WnQ&s=10" group-title="Documentaries",Discovery HD (Pro)
