@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MITV - Premium Digital Entertainment | Live HD TV</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/rGPFbMs8/mitv.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet"/>
+    
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> 
+    
+    <style>
+        /* ========================================================================= */
+        /* [001] CORE CSS SETUP & VARIABLES (DESIGN FOUNDATION) */
+        /* ========================================================================= */
+        :root {
+            --bg-dark: #07090f; /* Deepest Black Blue for background */
+            --bg-secondary: #10141f; /* Secondary dark color for cards/sections */
+            --color-primary: #38761d; /* MITV Deep Green (Action/Highlight Color) */
+            --color-secondary: #f5b700; /* Gold/Yellow Accent (PRO/Premium Highlight) */
+            --color-text-light: #e0e0e0;
+            --color-text-dim: #999;
+            --transition-speed: 0.3s; /* Global speed for hover effects */
+            --border-radius-lg: 12px;
+            --border-radius-sm: 8px;
+        }
+
+        /* Reset and Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth; /* For smooth page navigation */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            /* body opacity ab preloader handle karega */
+        }
+
+        /* Utility Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* General Headings Style (Consistent look) */
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+            position: relative;
+        }
+
+        h2 span {
+            color: var(--color-primary);
+        }
+        
+        /* Separator line for headings */
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--color-secondary);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Call to Action Button Base Style */
+        .cta-button {
+            display: inline-block;
+            background-color: var(--color-primary);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px; /* Pill shape for modern look */
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(56, 118, 29, 0.3);
+        }
+        
+        .cta-button:hover {
+            background-color: #4a912e; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56, 118, 29, 0.5);
+        }
+
+        /* ========================================================================= */
+        /* [002] PRELOADER & CUSTOM SPINNER (Ensures Smooth Start) - FIXED */
+        /* ========================================================================= */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column; /* Added for better text alignment */
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* Added visibility transition */
+            pointer-events: all;
+            opacity: 1; /* Start visible */
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden; /* Hide element completely after fade */
+            pointer-events: none; /* Disable clicks */
+        }
+        
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite, color-change 4s linear infinite;
+        }
+        
+        #preloader p {
+            margin-top: 20px;
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes color-change {
+            0% { border-top-color: var(--color-primary); }
+            50% { border-top-color: var(--color-secondary); }
+            100% { border-top-color: var(--color-primary); }
+        }
+
+        /* ========================================================================= */
+        /* [003] HEADER & NAVIGATION (Sticky & Responsive) */
+        /* ========================================================================= */
+        header {
+            background-color: var(--bg-secondary);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .navbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { display: flex; align-items: center; text-decoration: none; color: white; font-size: 1.8rem; font-weight: 700; }
+        .logo img { width: 45px; height: 45px; margin-right: 10px; border-radius: 50%; }
+        .nav-links { list-style: none; display: flex; }
+        .nav-links li { margin-left: 35px; }
+        .nav-links a { 
+            color: var(--color-text-light); text-decoration: none; font-weight: 500; 
+            transition: color var(--transition-speed); padding: 5px 0; position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--color-primary); }
+        .nav-links a.active::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background-color: var(--color-primary); border-radius: 1px; }
+        
+        /* Mobile Toggle Button */
+        #menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; order: 2; }
+        #nav-wrapper { display: flex; align-items: center; }
+
+        /* ========================================================================= */
+        /* [004] MAIN CONTENT LAYOUT */
+        /* ========================================================================= */
+        .content-section {
+            padding: 80px 0;
+            display: none; 
+            min-height: 80vh;
+        }
+        
+        /* ========================================================================= */
+        /* [005] HOME SECTION (HERO BANNER) */
+        /* ========================================================================= */
+        #home { padding-top: 0; }
+        
+        .hero-banner {
+            width: 100%;
+            height: 500px; /* Increased height for impact */
+            background-image: url('https://i.ibb.co/fdnVJtbN/a.png'); 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.6); /* Stronger dark overlay */
+        }
+
+        .hero-text {
+            padding: 20px;
+            color: white;
+            /* Text Shadow for better visibility */
+            text-shadow: 0 0 15px rgba(0, 0, 0, 1); 
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-text h1 {
+            font-size: 4.5rem; /* Large text for focus */
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .hero-text p {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Feature Grid below Hero */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 80px;
+            text-align: left;
+        }
+        
+        .feature-item {
+            background-color: var(--bg-secondary);
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border-top: 5px solid var(--color-primary);
+            transition: transform var(--transition-speed), border-color var(--transition-speed);
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-secondary);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7);
+        }
+        
+        .feature-item i {
+            color: var(--color-secondary);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .feature-item h3 {
+            color: var(--color-text-light);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        /* ========================================================================= */
+        /* [006] LIVE TV SECTION (HLS Loading & PRO Check Fix) */
+        /* ========================================================================= */
+        #live-tv { padding-top: 80px; }
+        
+        .player-container {
+            position: relative;
+            padding-bottom: 56.25%; 
+            height: 0;
+            overflow: hidden;
+            background-color: #000;
+            margin-bottom: 40px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            border: 1px solid #1a1e27;
+        }
+        
+        /* Custom Loading Icon Overlay (FAST PLAYER INDICATION) */
+        #loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        #loading-overlay.active {
+            opacity: 1;
+            pointer-events: auto; /* Re-enable pointer events when active */
+        }
+        
+        #loading-overlay p {
+            margin-top: 20px;
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .player-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Slightly smaller for mobile friendly */
+            gap: 15px;
+        }
+
+        .channel-item {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-sm);
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform var(--transition-speed), background-color var(--transition-speed), box-shadow var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .channel-item:hover {
+            transform: scale(1.05);
+            background-color: #1a202d;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(56, 118, 29, 0.4);
+        }
+
+        .channel-item img {
+            width: 60px; /* Reduced size */
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%; /* Circular logos */
+            margin-bottom: 10px;
+            border: 1px solid #333;
+        }
+        
+        .pro-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--color-secondary);
+            color: var(--bg-dark);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-bottom-left-radius: 8px;
+            transform: skewX(-10deg);
+        }
+        
+        .pro-badge span {
+            display: inline-block;
+            transform: skewX(10deg);
+        }
+
+
+        /* ========================================================================= */
+        /* [007] CONTACT/SUBSCRIPTION SECTION (WhatsApp Form Fix) */
+        /* ========================================================================= */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .whatsapp-form {
+            background-color: var(--bg-secondary);
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid #1a1e27;
+        }
+        
+        .whatsapp-form input, .whatsapp-form select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #1a1e27;
+            color: var(--color-text-light);
+            font-size: 1rem;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366; 
+            color: white;
+            padding: 15px;
+            width: 100%;
+            border-radius: 50px;
+            font-size: 1.1rem;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 450px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ========================================================================= */
+        /* [008] NEW DEVICE COMPATIBILITY SECTION (To increase detail/lines) */
+        /* ========================================================================= */
+        #devices {
+            background-color: #0d121b;
+            padding: 80px 0;
+        }
+
+        .device-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+        
+        .device-card {
+            background-color: var(--bg-dark);
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            border-bottom: 4px solid var(--color-secondary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .device-card i {
+            font-size: 3.5rem;
+            color: var(--color-primary);
+            margin-bottom: 15px;
+        }
+
+        .device-card h4 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        /* ========================================================================= */
+        /* [009] FAQS (Accordion Logic) */
+        /* ========================================================================= */
+        .faq-item {
+            background-color: var(--bg-secondary);
+            margin-bottom: 15px;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 18px 25px;
+            background-color: #1a1e27;
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+            color: var(--color-primary);
+            transition: background-color var(--transition-speed);
+        }
+        
+        .faq-question:hover {
+             background-color: #222a38;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+            background-color: var(--bg-secondary);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px; /* Sufficiently large height */
+            padding: 15px 25px;
+        }
+
+        /* ========================================================================= */
+        /* [010] MEDIA QUERIES (Mobile Responsiveness) */
+        /* ========================================================================= */
+        @media (max-width: 992px) {
+            .hero-text h1 { font-size: 3.5rem; }
+            .about-content { flex-direction: column; text-align: center; }
+            .about-image { text-align: center; margin-top: 30px; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .map-container { height: 300px; }
+        }
+        
+        @media (max-width: 768px) {
+            h2 { font-size: 2rem; }
+            .hero-banner { height: 350px; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .hero-text p { font-size: 1.1rem; }
+            
+            /* Mobile Nav Overhaul */
+            #menu-toggle { display: block; }
+            #nav-wrapper { 
+                display: none; width: 100%; flex-direction: column; position: absolute; 
+                top: 75px; left: 0; background-color: var(--bg-secondary); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+                padding-bottom: 10px;
+            }
+            #nav-wrapper.active { display: flex; }
+            .nav-links { flex-direction: column; width: 100%; }
+            .nav-links li { margin: 0; }
+            .nav-links a { display: block; padding: 15px 20px; border-bottom: 1px solid #1a1e27; }
+            #account-btn { width: calc(100% - 40px); margin: 15px 20px; }
+            
+            .content-section { padding: 50px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-spinner"></div>
+        <p>Initializing Digital Stream... Please Wait.</p>
+    </div>
+    
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo" onclick="navigate('home'); return false;">
+                    <img src="https://i.ibb.co/rGPFbMs8/mitv.png" alt="MITV Logo">
+                    MITV
+                </a>
+                
+                <button id="menu-toggle" aria-label="Toggle navigation" onclick="toggleMenu()">☰</button>
+                
+                <div id="nav-wrapper">
+                    <ul class="nav-links">
+                        <li><a href="#home" data-section="home" class="active" onclick="navigate('home'); return false;">Home</a></li>
+                        <li><a href="#live-tv" data-section="live-tv" onclick="navigate('live-tv'); return false;">Live TV</a></li>
+                        <li><a href="download.html" data-section="download" onclick="download.html">App download</a></a></li>
+                        <li><a href="#plans" data-section="plans" onclick="navigate('plans'); return false;">Packages</a></li>
+                        <li><a href="#devices" data-section="devices" onclick="navigate('devices'); return false;">Devices</a></li>
+                        <li><a href="#about" data-section="about" onclick="navigate('about'); return false;">About Us</a></li>
+                        <li><a href="#faqs" data-section="faqs" onclick="navigate('faqs'); return false;">FAQs</a></li>
+                        <li><a href="#contact" data-section="contact" onclick="navigate('contact'); return false;">Contact</a></li>
+                    </ul>
+                    <button id="account-btn" onclick="handleAccountAction()"></button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        
+        <section id="home" class="content-section" style="min-height: auto;">
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <h1>Witness the Future of <span>Digital Entertainment</span></h1>
+                    <p>India aur Pakistan ke 150+ Channels Full HD mein, Jazz Free Data aur Replay feature ke saath!</p>
+                    <button class="cta-button" onclick="navigate('live-tv')">Start Watching Free Channels</button>
+                </div>
+            </div>
+            
+            <div class="container">
+                <h2 style="margin-top: 80px;">Muaaz Iqbal: Humari <span>Key</span> Features</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-satellite-dish"></i>
+                        <h3>15000+ Channels</h3>
+                        <p>Sports, News, Entertainment - har category mein mukammal channels collection.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-lock"></i>
+                        <h3>Secure & Stable</h3>
+                        <p>Dedicated high-speed servers jo aapke experience ko buffering-free banate hain.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tv"></i>
+                        <h3>4K & HD Support</h3>
+                        <p>Most popular channels 4K aur Full HD (1080p) quality mein available hain.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-headset"></i>
+                        <h3>24/7 Support</h3>
+                        <p>WhatsApp par fori (instant) support hamesha maujood hai aapki madad ke liye.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="login" class="content-section">
+            <div class="container">
+                <h2 id="login-heading">Client <span>Login</span></h2>
+                
+                <div class="login-box" style="max-width: 450px; margin: 0 auto; background-color: var(--bg-secondary); padding: 40px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7);">
+                    
+                    <div id="login-form-area">
+                        <p style="color: var(--color-text-dim); margin-bottom: 25px; text-align: center;">Apna Phone Number (e.g., 3xxxxxxxxx) ya Client ID (e.g., xxx_xx) daal kar login karein:</p>
+                        <input type="text" id="login-input" placeholder="Phone Number or Client ID" style="text-transform: lowercase; margin-bottom: 25px;">
+                        
+                        <button id="login-btn" onclick="handleLogin()" class="cta-button" style="width: 100%;">SECURE LOGIN</button>
+                    </div>
+
+                    <div id="account-details">
+                        </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <section id="live-tv" class="content-section">
+            <div class="container">
+                <h2>Live <span>Streaming</span> Dashboard</h2>
+                <p style="text-align: center; margin-bottom: 30px; color: var(--color-secondary); font-weight: 500;">Channel chalanay ke liye click karein. Player stream ko foran load karega.</p>
+
+                <div class="live-tv-content-wrapper">
+                    
+                    <div class="player-wrapper">
+                        <div class="player-container">
+                            <div id="loading-overlay">
+                                <div class="loader-spinner"></div>
+                                <p>Streaming data is loading...</p>
+                            </div>
+                            <video id="videoPlayer" class="video-js vjs-theme-city vjs-big-play-centered" 
+                                controls 
+                                preload="auto" 
+                                poster="https://i.ibb.co/fdnVJtbN/a.png"
+                                data-setup='{"fluid": true}'>
+                                <p class="vjs-no-js">
+                                    To view this video please enable JavaScript, and consider upgrading to a web browser that
+                                    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                                </p>
+                            </video>
+                        </div>
+                    </div>
+                    
+                    <div class="channels-list-wrapper">
+                        <h3 style="color: white; margin-bottom: 10px; border-left: 4px solid var(--color-primary); padding-left: 15px;">Available Channels</h3>
+                        <div id="channels-list" class="channels-grid">
+                            </div>
+                    </div>
+                    
+                </div>
+                
+                <p class="player-info-strip">
+                    <i class="fas fa-crown" style="color: var(--color-secondary); margin-right: 10px;"></i>
+                    <span style="font-weight: 600; color: white;">PRO Channels dekhne ke liye:</span>
+                    <a href="#plans" onclick="navigate('plans'); return false;" style="color: var(--color-secondary); text-decoration: underline; margin-left: 5px;">Go Premium</a>
+                    to get stream link with the **Telivizio** app (Recommended for best quality).
+                </p>
+
+            </div>
+        </section>
+        
+        <section id="plans" class="content-section" style="background-color: var(--bg-secondary);">
+            <div class="container">
+                <h2>Our Flexible <span>Packages</span></h2>
+
+                <div class="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                    
+                    <div class="plan-card" style="background-color: var(--bg-dark); padding: 35px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); border-top: 6px solid var(--color-primary); text-align: center;">
+                        <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Pakistan Basic</h3>
+                        <p class="price" style="font-size: 3rem; font-weight: 700; color: var(--color-primary); margin-bottom: 25px;">RS.150<small style="font-size: 1.2rem; font-weight: 400; color: var(--color-text-dim); ">/Month</small></p>
+                        <ul class="features-list" style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left;">
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-check-circle" style="color: var(--color-primary);"></i> 500+ Pakistani Channels</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-check-circle" style="color: var(--color-primary);"></i> Full HD Quality</li>
+                            <li style="padding: 10px 0;"><i class="fas fa-check-circle" style="color: var(--color-primary);"></i> 1 Device Support</li>
+                        </ul>
+                        <a href="#contact" class="cta-button" onclick="navigate('contact'); return false;" style="background-color: var(--color-primary);">Subscribe Now</a>
+                    </div>
+                    
+                    <div class="plan-card" style="background-color: var(--bg-dark); padding: 35px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); border-top: 6px solid var(--color-secondary); text-align: center; transform: scale(1.05);">
+                        <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Premium Package (PRO)</h3>
+                        <p class="price" style="font-size: 3rem; font-weight: 700; color: var(--color-secondary); margin-bottom: 25px;">RS.200<small style="font-size: 1.2rem; font-weight: 400; color: var(--color-text-dim); ">/Month</small></p>
+                        <ul class="features-list" style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left;">
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> **500+ Channels (Pak & India)**</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> **4 Devices Support**</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> Replay & Rewind Feature</li>
+                            <li style="padding: 10px 0;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> All PRO Channels Access</li>
+                        </ul>
+                        <a href="#contact" class="cta-button" onclick="navigate('contact'); return false;" style="background-color: var(--color-secondary); color: var(--bg-dark); box-shadow: 0 4px 15px rgba(245, 183, 0, 0.5);">Go Premium</a>
+                    </div>
+                     <div class="plan-card" style="background-color: var(--bg-dark); padding: 35px; border-radius: 12px; box-shadow: 0 5px 15px rgba(10, 0, 0, 0.5); border-top: 6px solid var(--color-secondary); text-align: center; transform: scale(1.05);">
+                        <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Premium Package (PRO+)</h3>
+                        <p class="price" style="font-size: 3rem; font-weight: 700; color: var(--color-secondary); margin-bottom: 25px;">RS.450<small style="font-size: 1.2rem; font-weight: 400; color: var(--color-text-dim); ">/Month</small></p>
+                        <ul class="features-list" style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left;">
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> **15000+ Channels world 56000+ movies 6210+ seroes**</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> **2 Devices Support**</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> Replay & Rewind Feature</li>
+                            <li style="padding: 10px 0;"><i class="fas fa-star" style="color: var(--color-secondary);"></i> All PRO Channels Access</li>
+                        </ul>
+                        <a href="#contact" class="cta-button" onclick="navigate('contact'); return false;" style="background-color: var(--color-secondary); color: var(--bg-dark); box-shadow: 0 4px 15px rgba(245, 183, 0, 0.5);">Go Premium</a>
+                    </div>
+                    
+                    <div class="plan-card" style="background-color: var(--bg-dark); padding: 35px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); border-top: 6px solid #444; text-align: center;">
+                        <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Setup & Activation</h3>
+                        <p class="price" style="font-size: 3rem; font-weight: 700; color: #aaa; margin-bottom: 25px;">RS.500<small style="font-size: 1.2rem; font-weight: 400; color: var(--color-text-dim); ">/One-Time</small></p>
+                        <ul class="features-list" style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left;">
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-wrench" style="color: #aaa;"></i> First time activation fee</li>
+                            <li style="padding: 10px 0; border-bottom: 1px dashed #333;"><i class="fas fa-wrench" style="color: #aaa;"></i> App/Client Setup Assistance</li>
+                            <li style="padding: 10px 0;"><i class="fas fa-wrench" style="color: #aaa;"></i> Guaranteed Smooth Start</li>
+                        </ul>
+                        <a href="#contact" class="cta-button" onclick="navigate('contact'); return false;" style="background-color: #555;">Pay Setup Fee</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="content-section">
+            <div class="container">
+                <h2>Humari <span>Kahani</span></h2>
+                
+                <div class="about-content" style="display: flex; gap: 40px; align-items: center;">
+                    <div class="about-text" style="flex: 1;">
+                        <h3 style="color: var(--color-primary); font-size: 1.8rem; margin-bottom: 15px;">MITV Digital Journey</h3>
+                        <p style="color: var(--color-text-dim); margin-bottom: 20px;">
+                            MITV ko 2019 mein ek chote se team ne shuru kiya tha jinka maqsad tha Pakistan ke her kone mein behtareen Digital Entertainment service ko pahunchana. Hum high-quality streaming aur zero-buffering technology ko barqarar rakhte hain. Humara mission simple hai: **Her Pakistani Ghar mein HD Entertainment, woh bhi saste daamon mein!**
+                        </p>
+                        <p style="margin-bottom: 20px; border-left: 3px solid var(--color-secondary); padding-left: 15px;">
+                            Humari service sirf channels tak mehdood nahi hai, hum aapko Replay/Catch-up TV, aur aala customer support bhi dete hain. Humara focus hamesha client satisfaction aur technology innovation par rehta hai. Hum har roz naye features aur channels add karte rehte hain, taake aapko hamesha latest content milta rahe.
+                        </p>
+                        <button class="cta-button" onclick="navigate('devices')">Compatibility Check Karein</button>
+                    </div>
+                    <div class="about-image" style="flex: 1; text-align: right;">
+                        <img src="https://i.ibb.co/fdnVJtbN/a.png" alt="MITV Setup Image" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="devices" class="content-section">
+            <div class="container">
+                <h2>Device <span>Compatibility</span></h2>
+                <p style="text-align: center; margin-bottom: 40px; color: var(--color-text-dim);">Aap MITV ko in tamaam devices par use kar sakte hain. Humara app her platform ke liye optimized hai.</p>
+                
+                <div class="device-info-grid">
+                    
+                    <div class="device-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h4>Android Mobile/Tablet</h4>
+                        <p>Official MITV Android App ke zariye. Best experience ke liye recommended.</p>
+                    </div>
+                    
+                    <div class="device-card">
+                        <i class="fas fa-laptop"></i>
+                        <h4>Laptops/Computers</h4>
+                        <p>Kissi bhi modern browser (Chrome, Firefox) mein humari website ke zariye.</p>
+                    </div>
+                    
+                    <div class="device-card">
+                        <i class="fas fa-tv"></i>
+                        <h4>Smart TV (Android/Firestick)</h4>
+                        <p>Apne Android TV ya Amazon Fire Stick par humara App install karein.</p>
+                    </div>
+                    
+                    <div class="device-card">
+                        <i class="fab fa-apple"></i>
+                        <h4>Apple iOS/iPadOS</h4>
+                        <p>App Store se IPTV Player app download karein aur humari M3U file load karein.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="faqs" class="content-section" style="background-color: var(--bg-secondary);">
+            <div class="container">
+                <h2>Frequently Asked <span>Questions</span></h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">MITV ki streaming quality kya hai aur yeh cable se kaise behtar hai? <i class="fas fa-plus" style="float: right;"></i></div>
+                    <div class="faq-answer">
+                        <p>MITV channels Full HD (1080p) aur kuch channels 4K quality mein stream hote hain. Yeh cable se isliye behtar hai kyunki aapko Rewind/Catch-up TV, zero-buffering server stability, aur mobile access milta hai.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">PRO channels dekhne ke liye kya zaroori hai? <i class="fas fa-plus" style="float: right;"></i></div>
+                    <div class="faq-answer">
+                        <p>PRO channels (jaise PTV Sports PRO, ARY Digital PRO) dekhne ke liye aapka **Premium Package** (Rs. 200/Month) activate hona chahiye. Login karne ke baad hi aap in channels ko access kar payenge. Agar aap free user hain aur PRO channel click karte hain, toh aapko subscription page par redirect kiya jayega.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Kya Free Data har waqt available rehta hai? <i class="fas fa-plus" style="float: right;"></i></div>
+                    <div class="faq-answer">
+                        <p>Haan, Jazz SIM network par humari channels ki streaming ke liye free data available hai, yani aapka internet package use nahi hoga. Lekin, Free Data service sirf Jazz ki network coverage area mein kaam karti hai.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">Mera stream bar bar ruk jata hai, kya masla hai? <i class="fas fa-plus" style="float: right;"></i></div>
+                    <div class="faq-answer">
+                        <p>Agar stream ruk jaye to check karein ki aapka Jazz signal kamzor toh nahi. Agar aap PRO user hain, toh doosre device se logout karke phir se koshish karein. Agar phir bhi masla ho, toh fori WhatsApp support par contact karein.</p>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+
+        <section id="contact" class="content-section">
+            <div class="container">
+                <h2>Contact Us & <span>Subscription</span></h2>
+
+                <div class="contact-grid">
+                    
+                    <div class="whatsapp-form">
+                        <h3 style="color: var(--color-primary); margin-bottom: 25px;">Direct WhatsApp Order (Fastest Way to Subscribe)</h3>
+                        
+                        <label for="wa-name">Apna Naam (Full Name):</label>
+                        <input type="text" id="wa-name" placeholder="Name" required>
+
+                        <label for="wa-number">Phone Number:</label>
+                        <input type="number" id="wa-number" placeholder="e.g. 3062015326" required>
+                        
+                        <label for="wa-cnic">CNIC Number (Optional for Verification):</label>
+                        <input type="text" id="wa-cnic" placeholder="e.g. 35202xxxxxxx" >
+                        
+                        <label for="wa-package">Package Select Karein:</label>
+                        <select id="wa-package" required>
+                            <option value="Pakistan Basic (Rs. 150/Month)">Pakistan Basic (Rs. 150/Month)</option>
+                            <option value="Premium Package (Rs. 200/Month)">Premium Package (Rs. 200/Month)</option>
+                            <option value="Premium+ Package (Rs. 450/Month)">Premium+ Package (Rs. 450/Month)</option>
+                            <option value="Setup Fee (Rs. 500/One-Time)">Setup Fee (Rs. 500/One-Time)</option>
+                        </select>
+                        
+                        <button class="whatsapp-btn" onclick="sendWhatsAppMessage()">
+                            <i class="fab fa-whatsapp"></i> Send Subscription Request on WhatsApp
+                        </button>
+                        
+                        <p style="color: #4a912e; font-size: 0.85rem; margin-top: 15px; text-align: center;">Humara team aapko foran payment details aur setup guide bhej dega.</p>
+                    </div>
+
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3401.990425983652!2d74.30396481514757!3d31.52040518137351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391904a4e8d38e2d%3A0x6a05e533e507b9a!2sLahore%2C%20Punjab%2C%20Pakistan!5e0!3m2!1sen!2s!4v1628100000000!5m2!1sen!2s" 
+                            allowfullscreen="" 
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container" style="padding: 30px 15px; text-align: center; border-top: 1px solid #1a1e27;">
+            <p style="margin-bottom: 10px;">© 2025 MITV - Premium Digital Entertainment. All Rights Reserved.</p>
+            <p style="color: var(--color-text-dim); font-size: 0.9rem;">WhatsApp Support: <span style="color: var(--color-primary); font-weight: 600;">+92 306 2015326</span> | Email: support@mitv.pk</p>
+        </div>
+    </footer>
+
+    
+    <script>
+        
+        // =========================================================================
+        // [5.0] JAVASCRIPT CORE LOGIC (Client Management, M3U Parsing, Video.js Player)
+        // =========================================================================
+
+        let clientList = []; 
+        let channelsData = []; 
+        let videoPlayerInstance = null; // 🟢 NEW: Global variable for the Video.js player
+        
+        // [5.1] M3U Playlist Content (Logos added for correct parser demo)
+        const m3uContent = `
+#EXTM3U
+#EXTINF:-1 tvg-logo="https://i.ibb.co/rGPFbMs8/mitv.png"group-title="Radio📻", Quran radio 🔘 
+#EXTVLCOPT:video-filter=scene
+http://otv.to:80/03062015326/123456/206282
+#EXTINF:-1 tvg-id="peghamQuran.pk@SD" tvg-logo="https://is1-ssl.mzstatic.com/image/thumb/Purple123/v4/27/35/2a/27352ae4-81d0-61c4-ec55-dd6be2b86ad2/AppIcon-0-0-1x_U007emarketing-0-0-0-5-0-85-220.png/1200x630wa.jpg" group-title="Religion: Islam",Quran tv Pegam (Pro)
+http://66.102.120.18:8000/play/a04h/index.m3u8
+#EXTINF:-1 tvg-id="saudi.quran.makkah.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/saudi-quran-makkah-tv-hd-live.webp" group-title="Religion: Islam",Saudi Quran Makkah TV HD live
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/Saudimakkah(nw)-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="saudi.sunnah.madinah.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/saudi-sunnah-madinah-tv-hd-live.webp?id=17" group-title="Religion: Islam",Saudi Sunnah Madinah TV HD live
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/SaudiSunnah(NW)-abr/live/vsat-149L/chunks.m3u8
+#EXTINF:-1 tvg-id="pegham.pk@SD" tvg-logo="https://i.ibb.co/gMhwDPS8/Pegamtv.jpg" group-title="Religion: Islam",Pegam TV (Pro)
+http://66.102.120.18:8000/play/a03e/index.m3u8
+#EXTINF:-1 tvg-id="peghampashto.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGlfUQ740on2LRkznYJ38bROYsoPSrTkoV_OD1IlURVQ&s=10" group-title="Religion: Islam",Pegam pashto
+http://66.102.120.18:8000/play/a04g/index.m3u8
+#EXTINF:-1 tvg-id="peace.tv.urdu.ae@SD" tvg-logo="https://i.postimg.cc/cLCfzgqB/peacetvurdu.png" group-title="Religion: Islam",Peace TV Urdu (1080p)
+https://ml-pull-dvc-myco.io:2096/PEACETV-URDU/index.m3u8
+#EXTINF:-1 tvg-id="peace.tv.en.ae@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251127%2Fmycolive-33_copy_20-1764254602627.webp&w=750&q=30" group-title="Religion: Islam",Peace TV English
+https://ml-pull-dvc-myco.io:2096/PEACETV-ENG/index.m3u8
+#EXTINF:-1 tvg-id="ptv.sports.pk@SD" tvg-logo="https://upload.wikimedia.org/wikipedia/en/e/e4/PTV_Sports.png" group-title="Sports",PTV Sports 
+https://cdn01isb.tamashaweb.com:8087/hls/106324/P9TDcaxe8iM/smil:mpfour.smil/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTIvMTQvMjAyNSA4OjEwOjM2IEFNJmhhc2hfdmFsdWU9K0hSN3lBTUJJcXRpdHhCQlVQRi8xQT09JnZhbGlkbWludXRlcz02MA%3D%3D
+#EXTINF:-1 tvg-id="a.sports.pk@SD" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/A%20Sports.png" group-title="Sports",A Sports (Pro)
+http://66.102.120.18:8000/play/a032/index.m3u8
+#EXTINF:-1 tvg-id="ten.sports.pk@SD" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/Ten%20Sports%20PK.png" group-title="Sports",Ten Sports (Pro)
+http://66.102.120.18:8000/play/a018/index.m3u8
+#EXTINF:-1 tvg-id="geo.super.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGj7f_Wn7L2Uy337D-Ruly7EYpNwIr61kW6DMyeUby5A&s=10" group-title="Sports",Geo Super
+https://ml-pull-dvc-myco.io:2096/GEO_SUPER/index.m3u8
+#EXTINF:-1 tvg-id="geo.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/geo-news-live.webp?id=52" group-title="News",GEO News
+https://cdn05khi.tamashaweb.com:8087/jazzauth/geoNews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="discovery.hd.in@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMJ-bU7at-8zBpPb6pgxLFV0Lgm3PdUvpxL2Vu0U9WnQ&s=10" group-title="Documentaries",Discovery HD (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/DiscoveryHD-abr/live/178M/chunks.m3u8
+#EXTINF:-1 tvg-id="ary.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1684242189-logo.webp?id=63" group-title="News",ARY News HD
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/ARYnews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="ary.digital.pk@SD" tvg-logo="https://i.imgur.com/TVP7g03.png" group-title="Entertainment",ARY Digital (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/ARYdigital-abr/live/vsat-ary-L/chunks.m3u8
+#EXTINF:-1 tvg-id="tamasha.life.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxmF1FRNQj2lTZqmq155v9LkzNoK5bm-aZXL0EAyJJLw&s=10" group-title="Entertainment",Tamasha Life (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/Tamasha-Life-HD-abr/live/Tamasha-Life-HD-H/chunks.m3u8
+#EXTINF:-1 tvg-id="ptv.news.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY8llQR0rGZyHsaNiixNEtGtF3HIAaOi4EX7Z4W6QT8A&s=10" group-title="News",PTV News (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/PTVNews-abr/live/191M/chunks.m3u8
+#EXTINF:-1 tvg-id="sun.news.in@SD" tvg-logo="[REPLACE_WITH_LOGO_URL]" group-title="News",Sun News (Pro)
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/SUN-NEWS-abr/live/187M/chunks.m3u8
+#EXTINF:-1 tvg-id="digital.pak.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1755087012153.webp?id=24" group-title="Documentaries",Digital Pakistan
+https://cdn05khi.tamashaweb.com:8087/jazzauth/Digital-pak-abr/live/DP-AI_240p/chunks.m3u8
+#EXTINF:-1 tvg-id="dawn.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/dawn-news-live.webp?id=54" group-title="News",Dawn News
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/DawnNews-abr/live/vsat-130L/chunks.m3u8
+#EXTINF:-1 tvg-id="ptv.home.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1750321510303.webp?id=80" group-title="Entertainment",PTV Home (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/PTVHome-abr/live/190M/chunks.m3u8
+#EXTINF:-1 tvg-id="geo.entertainment.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/geo-entertainment-live.webp?id=37" group-title="Entertainment",Geo Entertainment
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/GeoEntertainment-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="samaa.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/samaa-tv-live.webp?id=15" group-title="News",Samaa TV
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/samaaTV-abr/live/vsat-123L/chunks.m3u8
+#EXTINF:-1 tvg-id="ptv.world.pk@SD"  tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1750322208140.webp?id=49" group-title="News",PTV World (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/PTVWorld-abr/live/192M/chunks.m3u8
+#EXTINF:-1 tvg-id="cgtn.documentary.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1749124897580.webp?id=82" group-title="Documentaries",CGTN Documentary (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/CgtnDocumentary-abr/live/171M/chunks.m3u8
+#EXTINF:-1 tvg-id="eurosport.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1686912440-logo.webp?id=26" group-title="Sports",Euro Sport (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/Eurosport-abr/live/182M/chunks.m3u8?
+#EXTINF:-1 tvg-id="green.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1702552123-logo.webp?id=75" group-title="Entertainment",Green Entertainment (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/Green_Entertainment-abr/live/vsat-green-L/chunks.m3u8
+#EXTINF:-1 tvg-id="hum.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1738840613135.webp?id=95" group-title="Entertainment",Hum TV
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/humTV-abr/live/vsat-humtv-M/chunks.m3u8
+#EXTINF:-1 tvg-id="express.entertainment.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/express-entertainment-live.webp?id=77" group-title="Entertainment",Express Entertainment (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/ExpressEntertainment-abr/live/vsat-83L/chunks.m3u8
+#EXTINF:-1 tvg-id="inplus.hd.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/TMSH-1720441424490.webp?id=86" group-title="Movies",In Plus HD (Pro)
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/Inplus-abr/live/vsat-151L/chunks.m3u8
+#EXTINF:-1 tvg-id="ptv.national.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1750322366525.webp?id=46" group-title="Entertainment",PTV National
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/PTVNational-abr/live/193M/chunks.m3u8
+#EXTINF:-1 tvg-id="hum.masala.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1738840592660.webp?id=15" group-title="Cooking",Hum Masala (Pro)
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/hummasala-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="aaj.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/aaj-news-live.webp?id=52" group-title="News",Aaj News
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/AajNews-abr/live/vsat-96L/chunks.m3u8
+#EXTINF:-1 tvg-id="ary.zindagi.pk@SD"  tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/ary-zindagi-live-logo.webp?id=59" group-title="Entertainment",ARY zindagi (Pro)
+https://mitvnetwork.netlify.app/a0r0y0z.m3u8
+#EXTINF:-1 tvg-id="aljazeera.news.pk -->@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1706163791-logo.webp?id=10" group-title="News",Al Jazeera
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/AL-Jazeera-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="hum.sitaray.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/HUM-Sitaray-Channel-logo.webp?id=80" group-title="Entertainment",Hum Sitaray
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/HumSitaray-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="cnn.news.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/cnn-news-live.webp?id=84" group-title="News",CNN News
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/Livecnn-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="neo.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/neo-tv-live.webp?id=71" group-title="News",Neo News (Pro)
+https://cdn05khi.tamashaweb.com:8087/jazzauth/NeoNews-abr/live/vsat-110L/chunks.m3u8
+#EXTINF:-1 tvg-id="set.entertainment.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1730720761397.webp?id=85" group-title="Entertainment",Set Entertainment (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/SetEntertainment-abr/live/vsat-setent-L/chunks.m3u8
+#EXTINF:-1 tvg-id="aan.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1681977574-logo.webp?id=78" group-title="Entertainment",AAN TV (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/AAN-TV-abr/playlist.m3u8?
+#EXTINF:-1 tvg-id="bol.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/bol-news-live.webp?id=15" group-title="News",Bol News
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/BolNews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="minimax.hd.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1702633459-logo.webp?id=32" group-title="Kids",Minimax HD (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/Minimax-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="tv.one.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/tv-one-live.webp?id=63" group-title="Entertainment",TV One
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/TVOne-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="suno.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1709545345-logo.webp?id=71" group-title="News",Suno News (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/Suno_News-abr/live/vsat-89L/chunks.m3u8
+#EXTINF:-1 tvg-id="gtv.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/gtv-new-logo.webp?id=45" group-title="News",GTV News (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/GTVNews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="abn.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1686912075-logo.webp?id=36" group-title="News",ABN News (Pro)
+https://cdn05khi.tamashaweb.com:8087/jazzauth/ABNnews-abr/live/vsat-aurlife-M/chunks.m3u8
+#EXTINF:-1 tvg-id="madni.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/madani-channel-live.webp?id=59" group-title="Religion: Islam",Madni TV (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/Madni-abr/live/vsat-94L/chunks.m3u8
+#EXTINF:-1 tvg-id="gnn.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/gnn-live.webp?id=21" group-title="News",GNN (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/GNN-abr/live/vsat-gnn-L/chunks.m3u8
+#EXTINF:-1 tvg-id="sab.tv.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/1686044497-logo.webp?id=19" group-title="Entertainment",Sab TV (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/SabTV-abr/live/vsat-146L/chunks.m3u8
+#EXTINF:-1 tvg-id="bol.entertainment.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/bol-entertainment-live.webp?id=16" group-title="Entertainment",Bol Entertainment (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/BolEntertainment-abr/live/vsat-144L/chunks.m3u8
+#EXTINF:-1 tvg-id="cartoon.network.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/cartoon-network-live.webp?id=10" group-title="Kids",Cartoon Network
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/cartoonnetwork-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="a.plus.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/a-plus-live.webp?id=60" group-title="Entertainment",A Plus (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/Aplus-abr/live/vsat-112L/chunks.m3u8
+#EXTINF:-1 tvg-id="ltn.family.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/ltn-family-live.webp?id=63" group-title="Entertainment",LTN Family (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/LTNFamily-abr/live/vsat-ltntv-L/chunks.m3u8
+#EXTINF:-1 tvg-id="filmazia.pk@SD" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs3WbZ2yIfAjkcHbGpGhtJ9J7ZbA1iubCLuCgGqQjNig&s=10" group-title="Movies",Filmazia
+https://s3.ideationtec.live/Film_World/Film_World.m3u8
+#EXTINF:-1 tvg-id="a1.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/a1-tv-live.webp?id=76" group-title="Entertainment",A1 TV (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/A1TV-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="animal.planet.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/TMSH-1719302840733.webp?id=24" group-title="Documentaries",Animal Planet
+https://cdn05khi.tamashaweb.com:8087/jazzauth/AnimalPlanet-abr/live/158-3L/chunks.m3u8?
+#EXTINF:-1 tvg-id="discovery.pakistan.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/discover-pakistan-live-logo.webp?id=37" group-title="Documentaries",Discovery Pakistan
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/DiscoveryPakistan-abr/live/vsat-108L/chunks.m3u8?
+#EXTINF:-1 tvg-id="see.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/see-tv-live.webp?id=36" group-title="Entertainment",See TV (Pro)
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/seeTV-abr/live/vsat-136L/chunks.m3u8
+#EXTINF:-1 tvg-id="aur.life.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1745518766547.webp?id=71" group-title="Entertainment",Aur Life (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/AurLife-abr/live/vsat-365TV-M/chunks.m3u8
+#EXTINF:-1 tvg-id="premier.sports.a.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1755248383950.webp?id=17" group-title="Sports",EPL A (Pro)
+https://cdn02khi-n.tamashaweb.com:8087/jazzauth/EPL-A-abr/live/EPL-banner/chunks.m3u8
+#EXTINF:-1 tvg-id="bbc.news.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761652087354.webp?id=49" group-title="News",BBC News (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/BBCNEWS-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="bbc.lifestyle.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761652808195.webp?id=77" group-title="Entertainment",BBC Lifestyle (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/BBC-Lifestyle-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="bbc.earth.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761653800346.webp?id=84" group-title="Documentaries",BBC Earth
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/BBC-Earth-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="discovery.science.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761655046093.webp?id=96" group-title="Documentaries",Discovery Science (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/Discovery-Science-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="bbc.first.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761654477972.webp?id=64" group-title="Entertainment",BBC First (pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/BBC-First-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="bbc.cbeebies.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761654252051.webp?id=40" group-title="Kids",BBC Cbeebies (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/BBC-Cbeebies-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="bbc.brit.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761654790591.webp?id=11" group-title="Documentaries",BBC Brit (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/BBC-Brit-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="travel.channel.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761655290963.webp?id=24" group-title="Travel",Travel Channel (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/Travel-Channel-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="hum.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/HUM-News-Channel-logo.webp?id=98" group-title="News",Hum News
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/humnews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="discovery.investigation.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761655526289.webp?id=84" group-title="Documentaries",Discovery Investigation (Pro)
+https://cdn05khi.tamashaweb.com:8087/jazzauth/Discovery-Investigation-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="discovery.turbo.in@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1761655890951.webp?id=19" group-title="Entertainment",Discovery Turbo (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/Discovery-Turbo-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="express.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/express-news-live.webp?id=55" group-title="News",Express News (Pro)
+https://cdn24lhr.tamashaweb.com:8087/jazzauth/expressnews-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="k21.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/k21-news-live.webp?id=97" group-title="News",K21 News
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/K21-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="apna.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/apna-tv-live.webp?id=92" group-title="Entertainment",Apna TV (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/Apna-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="8xm.music.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/8xm-live.webp?id=19" group-title="Music",8XM Music (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/8xm-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="jalwa.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/jalwa-tv-live.webp?id=83" group-title="Music",Jalwa
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/jalwa-abr/live/vsat-81L/chunks.m3u8
+#EXTINF:-1 tvg-id="aik.news.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/AIKNEWS-LOGO.webp?id=77" group-title="News",AIK News (Pro)
+https://cdn05khi.tamashaweb.com:8087/jazzauth/PNN-abr/live/vsat-84L/chunks.m3u8
+#EXTINF:-1 tvg-id="kohinoor.tv.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/kohenoor-tv-live.webp?id=51" group-title="Entertainment",Koh-e-noor (Pro)
+https://cdn23lhr.tamashaweb.com:8087/jazzauth/KohinoorTV-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="cgtn.hd.ae@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/1749124554903.webp?id=71" group-title="Entertainment",CGTN HD (Pro)
+https://cdn22lhr.tamashaweb.com:8087/jazzauth/CgtnHD-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="filmax.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/filmax-live.webp?id=16" group-title="Movies",Filmax (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/Filmax-abr/live/vsat-filmax-L/chunks.m3u8
+#EXTINF:-1 tvg-id="movie.one.pk@SD" tvg-logo="https://canvas.tamashaweb.com/jazzlive/uploads/channels/logo/movie-one-live.webp?id=58" group-title="Movies",Movie One (Pro)
+https://cdn21lhr.tamashaweb.com:8087/jazzauth/MovieOne-abr/playlist.m3u8
+#EXTINF:-1 tvg-id="hbo3.in@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251127%2Fmycolive-33_copy_19-1764255542436.webp&w=750&q=30" group-title="Movies",HBO 3 (Pro)
+https://ml-pull-dvc-myco.io:2096/HBO_3/index.m3u8
+#EXTINF:-1 tvg-id="hbo2.in@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251127%2Fmycolive-33_copy_18-1764255416246.webp&w=750&q=30" group-title="Movies",HBO 2
+https://ml-pull-dvc-myco.io:2096/HBO_2/index.m3u8
+#EXTINF:-1 tvg-id="mix.tv.in@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251105%2Fmycolive-mix_1jpg-1762353499626.webp&w=750&q=30" group-title="Movies",Mix TV 
+https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8
+#EXTINF:-1 tvg-id="pbs.kids.in@SD" tvg-logo="https://static.wikia.nocookie.net/elinor-wonders-why/images/d/d9/PBS_Kids_Dash_%25_282009%25_29.png" group-title="Kids",PBS Kids (Pro)
+https://us.ml-pull-dvc-myco.io:2096/PBS_KIDS/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-logo="https://i.scdn.co/image/ab67616d00001e02e65e1cc103ba5066d41f06fe" group-title="kids🎈",Motu patlo
+https://cloudfrontnet.vercel.app/tplay/playout/209622/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-logo="https://yt3.googleusercontent.com/3TuuHz-v_4DUoONsjOV7Ohly4LNUMkTnhmdMtZJO_vxwd50mXWJlL1oyPOd4IDaSUiVaAsUpbHw=s900-c-k-c0x00ffffff-no-rj" group-title="kids🎈",The jungle book
+https://cc-4bhi5osabejc9.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-4bhi5osabejc9/junglebook.m3u8
+`;
+
+        // [5.2] M3U Channel Parsing (FIXED: Logo, Audio/Subtitle Extraction)
+        function parseM3UContent(content) {
+            const lines = content.trim().split('\n');
+            const channels = [];
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].startsWith('#EXTINF:')) {
+                    const infoLine = lines[i];
+                    const urlLine = lines[i + 1];
+                    
+                    const nameMatch = infoLine.match(/,(.+)$/);
+                    const name = nameMatch ? nameMatch[1].trim() : 'Unknown Channel';
+                    
+                    const logoMatch = infoLine.match(/tvg-logo="([^"]+)"/);
+                    const logo = logoMatch 
+                        ? logoMatch[1].trim() 
+                        : `https://via.placeholder.com/60x60/10141f/ffffff?text=${name.substring(0, 3)}`; 
+                    
+                    const audioTrackMatch = infoLine.match(/audio-track="([^"]+)"/);
+                    const audioTracks = audioTrackMatch ? audioTrackMatch[1].split('|') : [];
+
+                    const subtitleTrackMatch = infoLine.match(/subtitle-track="([^"]+)"/);
+                    const subtitleTracks = subtitleTrackMatch ? subtitleTrackMatch[1].split('|') : [];
+
+                    const isPro = name.includes('(Pro)');
+                    const cleanName = name.replace(/\s*\(Pro\)/, '').replace(/\s*\(Free\)/, '');
+
+                    channels.push({
+                        name: cleanName,
+                        url: urlLine ? urlLine.trim() : '',
+                        isPro: isPro,
+                        logo: logo,
+                        audioTracks: audioTracks, // 🟢 NEW
+                        subtitleTracks: subtitleTracks // 🟢 NEW
+                    });
+                    i++; 
+                }
+            }
+            return channels;
+        }
+        
+        // [5.3] Video.js Player Initialization and Channel Playback
+        
+        function initializePlayer() {
+            // Destroy existing player instance if it exists
+            if (videoPlayerInstance) {
+                videoPlayerInstance.dispose();
+            }
+            
+            // Initialize Video.js player
+            videoPlayerInstance = videojs('videoPlayer', {
+                controls: true,
+                autoplay: false,
+                preload: 'auto',
+                // 🟢 NEW: Set a default streaming type (important for multi-format)
+                techOrder: ['html5'], 
+                sources: [] 
+            });
+            
+            // 🟢 NEW: Event listener to smoothly hide the loading icon
+            videoPlayerInstance.on('loadeddata', function() {
+                hideLoading();
+            });
+
+            // 🟢 NEW: Event listener for error handling
+            videoPlayerInstance.on('error', function() {
+                console.error("Video.js Error:", videoPlayerInstance.error());
+                alert('Stream load nahi ho saki. Channel link down ho sakta hai ya network issue hai.');
+                hideLoading();
+            });
+            
+            // 🟢 NEW: Use hls.js for optimal HLS/m3u8 support (fallback for browsers without native HLS)
+            videoPlayerInstance.ready(function() {
+                const player = this;
+                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                    player.hls = new Hls();
+                }
+                
+                // 🟢 Note: Video.js will automatically handle M3U8, MP4, MP3 using the HTML5 tech.
+                // It will use its own HLS implementation or the browser's native HLS.
+                // For a separate HLS.js instance: 
+                // if (player.hls) {
+                //     player.hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                //          player.play().catch(e => console.log("Autoplay blocked."));
+                //     });
+                // }
+            });
+        }
+        
+        function playChannel(channel) {
+            if (!channel.url) return;
+
+            const user = getLoggedInUser();
+            const loadingOverlay = document.getElementById('loading-overlay');
+            
+            // PRO Channel Access Check 
+            if (channel.isPro) {
+                const isPremiumUser = user && (user.id.toLowerCase().includes('pro') || user.id.toLowerCase().includes('a01_za') || user.id.toLowerCase().includes('a01_ar') ||user.id.toLowerCase().includes('a04_fj') ||user.id.toLowerCase().includes('a05_ml') ||user.id.toLowerCase().includes('a09_ma') || user.id.toLowerCase().includes('a03_ma') );
+                if (!isPremiumUser) {
+                    alert("🔒 Yeh PRO Channel sirf Premium Package walon ke liye hai. Ab aapko Subscription page (Contact) par redirect kiya ja raha hai.");
+                    navigate('contact'); 
+                    return;
+                }
+            }
+            
+            showLoading();
+
+            const mimeType = getMimeType(channel.url);
+            
+            // 🟢 NEW: Set new source and tracks
+            videoPlayerInstance.src({
+                src: channel.url,
+                type: mimeType
+            });
+            
+            // 🟢 NEW: Add subtitle tracks (if provided in M3U data, need to fetch VTT/SRT data)
+            // Note: Since the M3U doesn't provide the actual subtitle file URL (.vtt), 
+            // this is commented out but shows the necessary structure.
+            /*
+            const existingTracks = videoPlayerInstance.remoteTextTracks();
+            for(let i = 0; i < existingTracks.length; i++) {
+                 videoPlayerInstance.removeRemoteTextTrack(existingTracks[i]);
+            }
+            
+            channel.subtitleTracks.forEach((label, index) => {
+                 videoPlayerInstance.addRemoteTextTrack({
+                      kind: 'subtitles',
+                      label: label,
+                      src: `http://example.com/subs/${channel.id}_${index}.vtt`, // Placeholder for subtitle URL
+                      language: label.split(' ')[0].toLowerCase() 
+                 }, true);
+            });
+            */
+            
+            // 🟢 NEW: Play the stream
+            videoPlayerInstance.ready(function() {
+                 this.play().catch(e => {
+                      console.log("Autoplay was prevented.", e);
+                      // In case of autoplay failure, the user must click the play button
+                      hideLoading(); 
+                 });
+            });
+            
+            // 🟢 NEW: For pure HLS (m3u8) streams, multi-audio track switching is handled automatically 
+            // by Video.js's underlying HLS tech when the manifest contains multiple audio tracks.
+        }
+        
+        function getMimeType(url) {
+            if (url.endsWith('.m3u8')) return 'application/x-mpegURL';
+            if (url.endsWith('.mp4')) return 'video/mp4';
+            if (url.endsWith('.mp3')) return 'audio/mp3';
+            if (url.endsWith('.ts')) return 'video/MP2T'; 
+            // 🟢 NOTE: RTMP requires a Video.js plugin (e.g., videojs-flash or similar) 
+            // and often a separate fallback/tech.
+            // if (url.startsWith('rtmp://')) return 'rtmp/flash'; 
+            return '';
+        }
+        
+        function showLoading() {
+             const loadingOverlay = document.getElementById('loading-overlay');
+             if(loadingOverlay) loadingOverlay.classList.add('active');
+        }
+        
+        function hideLoading() {
+             const loadingOverlay = document.getElementById('loading-overlay');
+             // Reduced delay for faster UX
+             setTimeout(() => {
+                if(loadingOverlay) loadingOverlay.classList.remove('active');
+             }, 300); 
+        }
+
+
+        // [5.4] Channel Grid Rendering
+        function renderChannels(channels) {
+            const listDiv = document.getElementById('channels-list');
+            if (!listDiv) return;
+            
+            listDiv.innerHTML = '';
+            
+            channels.forEach(channel => {
+                const item = document.createElement('div');
+                item.className = 'channel-item';
+                // 🟢 NEW: Use an anonymous function to pass the channel object
+                item.onclick = () => playChannel(channel); 
+                
+                item.innerHTML = `
+                    ${channel.isPro ? '<span class="pro-badge">PRO</span>' : ''}
+                    <img src="${channel.logo}" alt="${channel.name} Logo">
+                    <p title="${channel.name}">${channel.name}</p>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+        
+        // [5.5] Client Data Parsing (Uses same logic for simplicity)
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headerLineIndex = 2; 
+            if (lines.length < headerLineIndex + 2) return [];
+            const COL_NAME = 1;      
+            const COL_PHONE = 5;     
+            const COL_ID = 8;        
+            const clientData = [];
+            for (let i = headerLineIndex + 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line.trim() || line.startsWith('□,,,,,,,,')) continue;
+                const values = line.split(',');
+                if (values.length > COL_ID) {
+                    const phone = values[COL_PHONE] ? values[COL_PHONE].trim() : '';
+                    const id = values[COL_ID] ? values[COL_ID].trim().toLowerCase() : '';
+                    if (phone || id) { 
+                         clientData.push({
+                            name: values[COL_NAME] ? values[COL_NAME].trim() : 'Unknown Client',
+                            phone: phone,
+                            id: id 
+                        });
+                    }
+                }
+            }
+            return clientData;
+        }
+
+        async function fetchClientData() {
+            const csvUrl = 'mitv.csv'; 
+            try {
+                const response = await fetch(csvUrl);
+                if (!response.ok) {
+                    throw new Error(`Client list file nahi mili. Status: ${response.status}.`);
+                }
+                const csvText = await response.text();
+                clientList = parseCSV(csvText);
+            } catch (error) {
+                console.error('Error fetching client list:', error);
+                const accountDetailsDiv = document.getElementById('account-details');
+                if (accountDetailsDiv) {
+                    accountDetailsDiv.innerHTML = `<p style="color: red; text-align: center; font-weight: 500;">Warning: Client database load nahi ho paya. Login ke liye Client ID/Phone Number 'xxxx' / '3xxxxxxxxxx' try karein.</p>`;
+                    accountDetailsDiv.style.display = 'block';
+                    const formArea = document.getElementById('login-form-area');
+                    if(formArea) formArea.style.display = 'none';
+                }
+            }
+        }
+        
+        // [5.6] Login Handlers
+        function getLoggedInUser() {
+            try {
+                const userJson = localStorage.getItem('mitv_user');
+                return userJson ? JSON.parse(userJson) : null;
+            } catch (e) {
+                localStorage.removeItem('mitv_user');
+                return null;
+            }
+        }
+        
+        function updateAccountUI(user) {
+            const loginInput = document.getElementById('login-input');
+            const accountDetailsDiv = document.getElementById('account-details');
+            const accountButton = document.getElementById('account-btn');
+            const loginHeading = document.getElementById('login-heading');
+            const loginFormArea = document.getElementById('login-form-area');
+            
+            if (user) {
+                loginHeading.innerHTML = `Welcome, <span>${user.name}</span>!`;
+                if(loginFormArea) loginFormArea.style.display = 'none';
+                
+                // Enhanced PRO check logic
+                const isPremium = user.id.toLowerCase().includes('pro') || user.id.toLowerCase().includes('a03_ma');            
+                
+                
+                const packageStatus = isPremium ? '<span style="color: var(--color-secondary); font-weight: 700;">PREMIUM (PRO)</span>' : '<span style="color: var(--color-primary); font-weight: 700;">BASIC</span>';
+                
+                accountDetailsDiv.innerHTML = `
+                    <h3 style="color: var(--color-primary); margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">Your Account Summary</h3>
+                    <p style="margin-bottom: 8px;"><strong>Client Name:</strong> ${user.name}</p>
+                    <p style="margin-bottom: 8px;"><strong>Client ID:</strong> ${user.id.toUpperCase()}</p>
+                    <p style="margin-bottom: 15px;"><strong>Package Status:</strong> ${packageStatus}</p>
+                    <button class="cta-button logout-btn" onclick="handleLogout()" style="background-color: #c9302c; width: 100%;">LOGOUT</button>
+                `;
+                accountDetailsDiv.style.display = 'block';
+                accountButton.textContent = 'Account';
+            } else {
+                loginHeading.innerHTML = 'Client <span>Login</span>';
+                if(loginFormArea) loginFormArea.style.display = 'block';
+                accountDetailsDiv.style.display = 'none';
+                accountDetailsDiv.innerHTML = '';
+                if(loginInput) loginInput.value = '';
+                accountButton.textContent = 'Login';
+            }
+        }
+
+        function handleLogin() {
+            const loginInput = document.getElementById('login-input').value.trim().toLowerCase();
+            const accountDetailsDiv = document.getElementById('account-details');
+            
+            if (!loginInput) {
+                accountDetailsDiv.innerHTML = '<p style="color: #f5b700; text-align: center; margin-top: 15px;">Kripya Phone Number ya Client ID daalein.</p>';
+                accountDetailsDiv.style.display = 'block';
+                return;
+            }
+
+            const client = clientList.find(c => 
+                c.phone === loginInput || c.id === loginInput
+            );
+            
+            // Fallback clients for testing if CSV fails or for demo
+            const fallbackClients = [
+                { name: 'Zeeshan Araf', phone: '3004737061', id: 'a01_za' }, // PRO User Example
+                  { name: 'Muhammad Ans', phone: '3064642817', id: 'a03_ma' },
+                  { name: 'Gulam Mustafa🙅', phone: '3xxxxxxxxx', id: 'a05_ml' },
+                  { name: 'Muhammad Ahamd Bhalo🙋', phone: '3xxxxxxxxx', id: 'a09_ma' },
+                    { name: 'Fahad jatt🔥', phone: '3116599934', id: 'a04_fj' },
+                { name: 'Abdur rehamn', phone: '3066532066', id: 'a01_ar' } // Basic User Example
+            ];
+
+            const foundClient = client || fallbackClients.find(c => c.phone === loginInput || c.id === loginInput);
+
+            if (foundClient) {
+                localStorage.setItem('mitv_user', JSON.stringify(foundClient));
+                updateAccountUI(foundClient);
+                alert(`Login Successful! Welcome, ${foundClient.name}.`);
+                navigate('live-tv'); 
+            } else {
+                accountDetailsDiv.innerHTML = `
+                    <p style="color: red; text-align: center; margin-top: 15px;">Login failed. Di gai ID ya Phone Number database mein nahi mila. Agar aap first time user hain toh <a href="#contact" onclick="navigate('contact'); return false;" style="color: var(--color-primary); text-decoration: underline;">subscription ke liye contact karein</a>.</p>
+                `;
+                accountDetailsDiv.style.display = 'block';
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('mitv_user');
+            alert("Aap successfully logout ho chuke hain.");
+            updateAccountUI(null); 
+            navigate('home'); 
+        }
+        
+        function handleAccountAction() {
+            navigate('login');
+        }
+
+        // [5.7] WhatsApp Form Logic
+        function sendWhatsAppMessage() {
+            const name = document.getElementById('wa-name').value.trim();
+            const number = document.getElementById('wa-number').value.trim();
+            const cnic = document.getElementById('wa-cnic').value.trim();
+            const package = document.getElementById('wa-package').value;
+
+            if (!name || !number || number.length < 10) {
+                alert('Kripya apna poora Naam aur sahi Phone Number (10 digits minimum) daalein.');
+                return;
+            }
+
+            const message = `Assalam-o-Alaikum! Mai MITV Service subscribe karna chahta/chahti hoon. \n\n*Name:* ${name}\n*Phone:* ${number}\n*CNIC (Optional):* ${cnic || 'N/A'}\n*Package:* ${package}\n\nKripya mujhe agle steps ke liye guide karein. Shukriya.`;
+            const encodedMessage = encodeURIComponent(message);
+            const waUrl = `https://wa.me/923062015326?text=${encodedMessage}`;
+
+            window.open(waUrl, '_blank');
+        }
+
+        // [5.8] Navigation and Utility
+        function toggleMenu() {
+            const navWrapper = document.getElementById('nav-wrapper');
+            navWrapper.classList.toggle('active');
+        }
+
+        function navigate(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            const navWrapper = document.getElementById('nav-wrapper');
+            if (navWrapper && navWrapper.classList.contains('active')) {
+                navWrapper.classList.remove('active');
+            }
+            
+            if (sectionId === 'login') {
+                updateAccountUI(getLoggedInUser());
+            }
+
+            // Smooth scroll to the top of the section
+            if (targetSection) {
+                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // [5.9] DOM Initialization and Preloader Fix
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 🟢 NEW: Initialize the Video.js Player first
+            initializePlayer(); 
+            
+            // Fetch client data asynchronously
+            fetchClientData();
+            
+            // Parse and render channels
+            channelsData = parseM3UContent(m3uContent);
+            renderChannels(channelsData); 
+
+            // Set initial UI state
+            updateAccountUI(getLoggedInUser()); 
+            navigate('home'); 
+
+            // FAQs Accordion Logic 
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    // Close others and open current
+                    faqItems.forEach(i => {
+                        if (i !== item) {
+                            i.classList.remove('active');
+                        }
+                    });
+                    item.classList.toggle('active');
+                });
+            });
+            
+        });
+        
+        // **FIXED PRELOADER LOGIC** - Use window.onload for reliability
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            // Wait for 300ms *after* everything is loaded for a better UX, then fade out. (Reduced from 500ms)
+            setTimeout(() => {
+                if (preloader) {
+                    preloader.classList.add('hidden'); // This triggers CSS opacity/visibility transition
+                }
+            }, 300); 
+        });
+        
+    </script>
+</body>
+</html>
+
