@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MITV PRO | MAXIMUS ULTIMATE v26.0 ⚡</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --n-blue: #00f2ff;
+            --n-red: #e50914;
+            --bg-deep: #050505;
+            --card-bg: rgba(255,255,255,0.03);
+            --text-main: #ffffff;
+            --sidebar-bg: #0a0a0a;
+        }
+
+        .light-mode {
+            --bg-deep: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --sidebar-bg: #ffffff;
+        }
+
+        * { user-select: none !important; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 10001;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .login-box {
+            background: #111; border: 1px solid var(--n-red); padding: 40px 25px;
+            border-radius: 20px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 0 30px rgba(229, 9, 20, 0.3);
+        }
+        .login-input {
+            width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 15px;
+            border-radius: 12px; margin-bottom: 15px; color: white; outline: none; font-family: 'Orbitron';
+        }
+        .login-btn {
+            width: 100%; background: var(--n-red); color: white; padding: 15px;
+            border-radius: 12px; font-weight: bold; font-family: 'Orbitron'; cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-btn:active { transform: scale(0.95); }
+
+        /* --- SPLASH SCREEN --- */
+        #splash {
+            position: fixed; inset: 0; background: #000;
+            z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loader-box { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+        .circle { position: absolute; border-radius: 50%; border: 6px solid transparent; }
+        .c-1 { width: 170px; height: 170px; border-top-color: var(--n-blue); animation: spin 1.2s linear infinite; }
+        .c-2 { width: 140px; height: 140px; border-bottom-color: var(--n-red); animation: spin-rev 1.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin-rev { to { transform: rotate(-360deg); } }
+
+        /* --- APP HEADER --- */
+        .app-header {
+            height: 70px; background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+        }
+        .nav-tab {
+            padding: 10px 12px; cursor: pointer; color: #666; font-weight: 700;
+            font-family: 'Orbitron'; font-size: 10px; transition: 0.3s; position: relative;
+        }
+        .nav-tab.active { color: var(--n-red); }
+        .nav-tab.active::after {
+            content: ''; position: absolute; bottom: 0; left: 15%; width: 70%; height: 3px; background: var(--n-red);
+        }
+
+        /* --- SEARCH BOX --- */
+        #search-container {
+            padding: 10px 20px; background: rgba(0,0,0,0.2); display: none;
+        }
+        .search-input {
+            width: 100%; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 15px; border-radius: 20px; color: var(--text-main); outline: none; font-size: 14px;
+        }
+
+        /* --- MAIN VIEW --- */
+        .main-view { height: calc(100vh - 70px); overflow-y: auto; padding: 20px; scroll-behavior: smooth; }
+        .main-view::-webkit-scrollbar { width: 0; }
+
+        .folder-item {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center;
+            transition: 0.3s; cursor: pointer; text-align: center;
+        }
+        .folder-item:hover { border-color: var(--n-red); background: rgba(229, 9, 20, 0.1); }
+
+        .netflix-card {
+            aspect-ratio: 2/3; border-radius: 10px; overflow: hidden;
+            background: #111; border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+            transition: 0.3s; position: relative;
+        }
+        .netflix-card:hover { transform: translateY(-5px); border-color: var(--n-red); }
+        .card-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-label {
+            position: absolute; bottom: 0; width: 100%; padding: 10px 5px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9)); font-size: 10px; text-align: center; color: white;
+        }
+
+        /* --- SIDEBAR --- */
+        #sidebar {
+            position: fixed; left: -320px; top: 0; width: 300px; height: 100%;
+            background: var(--sidebar-bg); z-index: 1001; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 2px solid var(--n-red); padding: 25px; overflow-y: auto;
+        }
+        #sidebar.active { left: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1000; backdrop-filter: blur(4px); }
+
+        /* USER PANEL */
+        .user-panel {
+            background: linear-gradient(135deg, rgba(229,9,20,0.1), transparent);
+            border: 1px solid var(--n-red); border-radius: 15px; padding: 18px; margin-bottom: 25px;
+        }
+        .user-panel h3 { font-family: 'Orbitron'; font-size: 12px; color: var(--n-red); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .user-data-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .user-data-row span { font-weight: 700; color: var(--n-blue); }
+
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 10px; color: var(--n-red);
+            font-weight: bold; margin-bottom: 20px; cursor: pointer; font-size: 14px;
+        }
+
+        .control-btn {
+            width: 100%; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<div id="login-overlay" style="display: none;">
+    <div class="login-box">
+        <img src="https://i.ibb.co/rGPFbMs8/mitv.png" class="w-20 mx-auto mb-6">
+        <h2 class="orbitron text-white text-lg font-bold mb-6">SECURE LOGIN</h2>
+        <input type="text" id="user-input" class="login-input" placeholder="USERNAME (@)">
+        <input type="password" id="pass-input" class="login-input" placeholder="PASSWORD (#)">
+        <button onclick="attemptLogin()" class="login-btn">ACCESS MITV</button>
+        <p id="error-text" class="text-red-500 text-[10px] mt-4 uppercase orbitron tracking-widest"></p>
+    </div>
+</div>
+
+<div id="splash">
+    <div class="loader-box">
+        <div class="circle c-1"></div>
+        <div class="circle c-2"></div>
+        <img src="https://i.ibb.co/rGPFbMs8/mitv.png" class="w-20 z-10">
+    </div>
+    <h1 class="orbitron mt-8 text-xl font-bold tracking-[6px] text-white">MITV <span class="text-red-600">PRO ⚡</span></h1>
+    <p id="boot-status" class="mt-4 text-[10px] text-zinc-500 orbitron animate-pulse">SYNCHRONIZING SECURE DATA...</p>
+</div>
+
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<div id="sidebar">
+    <div class="flex justify-between items-center mb-6">
+        <img src="https://i.ibb.co/rGPFbMs8/mitv.png" class="w-12">
+        <i class="fas fa-times text-xl text-zinc-500" onclick="toggleSidebar()"></i>
+    </div>
+
+    <div class="user-panel">
+        <h3><i class="fas fa-shield-halved"></i> ACCOUNT STATUS</h3>
+        <div id="profile-content">
+            <div class="user-data-row">USER: <span id="u-name">---</span></div>
+            <div class="user-data-row">PHONE: <span id="u-phone">---</span></div>
+            <div class="user-data-row">PACKAGE: <span id="u-pkg">---</span></div>
+            <div class="user-data-row">STATUS: <span id="u-status">---</span></div>
+            <div class="user-data-row">EXPIRY: <span id="u-exp">---</span></div>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label class="text-[10px] text-zinc-500 block mb-2 uppercase">Preferred Media Player</label>
+            <select id="player-sel" onchange="updateSet()" class="w-full bg-zinc-900 p-4 rounded-xl text-sm outline-none border-none text-white">
+                <option value="vlc">VLC Player (Recommended)</option>
+                <option value="mx">MX Player</option>
+            </select>
+        </div>
+        
+        <button onclick="toggleTheme()" class="control-btn bg-zinc-800 text-white">
+            <i class="fas fa-moon"></i> SWITCH THEME
+        </button>
+
+        <a href="https://play.google.com/store/apps/details?id=org.videolan.vlc" target="_blank" class="control-btn bg-blue-600/20 text-blue-400 border border-blue-500/30">
+            <i class="fab fa-google-play"></i> UPDATE VLC PLAYER
+        </a>
+
+        <button onclick="logout()" class="control-btn bg-red-600/10 text-red-500 border border-red-600/30">
+            <i class="fas fa-sign-out-alt"></i> LOGOUT ACCOUNT
+        </button>
+    </div>
+    
+    <p class="text-[9px] text-zinc-600 text-center mt-10 uppercase orbitron">MITV PRO v26.0 build 8007</p>
+</div>
+
+<div id="app-shell" class="hidden flex flex-col h-screen">
+    <header class="app-header">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-bars-staggered text-red-600 text-xl cursor-pointer" onclick="toggleSidebar()"></i>
+        </div>
+        <nav class="flex">
+            <div id="t-tv" class="nav-tab active" onclick="setTab('tv')">LIVE</div>
+            <div id="t-mov" class="nav-tab" onclick="setTab('mov')">MOVIES</div>
+            <div id="t-ser" class="nav-tab" onclick="setTab('ser')">SERIES</div>
+        </nav>
+        <i class="fas fa-search text-zinc-400 text-lg cursor-pointer" onclick="toggleSearch()"></i>
+    </header>
+
+    <div id="search-container">
+        <input type="text" id="search-box" class="search-input" placeholder="Search channels or movies..." oninput="handleSearch()">
+    </div>
+
+    <main id="main-content" class="main-view no-scrollbar"></main>
+</div>
+
+<script>
+    const CONFIG = {
+        M3U: "https://api.github.com/repos/muaaziqbalvip/Mitvstream/contents/pkmitv.m3u",
+        USER_UI: "https://api.github.com/repos/muaaziqbalvip/Mitvclient/contents/user.ui",
+        TKN: "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",
+        VOD: "http://myott.to:8080/player_api.php?username=03062015326&password=123456&action=get_vod_streams",
+        SER: "http://myott.to:8080/player_api.php?username=03062015326&password=123456&action=get_series",
+        KEY: "mitv_pro_v26_storage"
+    };
+
+    let appState = {
+        tab: 'tv',
+        groups: {},
+        order: [],
+        movies: [],
+        series: [],
+        player: localStorage.getItem('mitv_player') || 'vlc',
+        user: null,
+        activeGroup: 'ALL CHANNELS'
+    };
+
+    // --- ON LOAD: AUTO LOGIN CHECK ---
+    window.onload = () => {
+        const savedUser = localStorage.getItem('mitv_user_session');
+        if (savedUser) {
+            appState.user = JSON.parse(savedUser);
+            initApp();
+        } else {
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+    };
+
+    async function attemptLogin() {
+        const u = document.getElementById('user-input').value.trim();
+        const p = document.getElementById('pass-input').value.trim();
+        const err = document.getElementById('error-text');
+
+        if(!u || !p) { err.innerText = "ENTER CREDENTIALS"; return; }
+
+        try {
+            err.innerText = "AUTHENTICATING...";
+            const res = await fetch(CONFIG.USER_UI, { headers: { 'Authorization': `token ${CONFIG.TKN}` }});
+            const data = await res.json();
+            const raw = decodeBase64(data.content);
+            
+            const lines = raw.split(':').filter(l => l.includes(';'));
+            let found = false;
+
+            for(let line of lines) {
+                const parts = line.replace(';', '').trim().split(',');
+                if(parts[0].replace('@', '') === u && parts[2].replace('#', '') === p) {
+                    appState.user = {
+                        name: parts[0].replace('@', ''),
+                        phone: parts[1].replace('*', ''),
+                        pkg: parts[3].replace('$', ''),
+                        status: parts[5].replace('?', ''),
+                        expiry: parts[6].replace('™', ''),
+                        date: parts[7].replace('∆', '')
+                    };
+                    found = true; break;
+                }
+            }
+
+            if(found && appState.user.status.toLowerCase() === 'active') {
+                localStorage.setItem('mitv_user_session', JSON.stringify(appState.user));
+                document.getElementById('login-overlay').style.display = 'none';
+                initApp();
+            } else {
+                err.innerText = found ? "ACCOUNT INACTIVE" : "INVALID LOGIN";
+            }
+        } catch(e) { err.innerText = "SYNC ERROR"; }
+    }
+
+    function decodeBase64(s) {
+        return new TextDecoder("utf-8").decode(new Uint8Array(atob(s).split("").map(c => c.charCodeAt(0))));
+    }
+
+    async function initApp() {
+        document.getElementById('splash').style.display = 'flex';
+        updateProfileUI();
+        document.getElementById('player-sel').value = appState.player;
+        
+        try {
+            const res = await fetch(CONFIG.M3U, { headers: { 'Authorization': `token ${CONFIG.TKN}` }});
+            const data = await res.json();
+            processM3U(decodeBase64(data.content));
+            loadVOD();
+        } catch (e) { console.error("Data Load Failed"); }
+
+        setTimeout(() => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('app-shell').classList.remove('hidden');
+        }, 2500);
+    }
+
+    function updateProfileUI() {
+        const u = appState.user;
+        document.getElementById('u-name').innerText = u.name;
+        document.getElementById('u-phone').innerText = u.phone;
+        document.getElementById('u-pkg').innerText = u.pkg;
+        document.getElementById('u-status').innerText = u.status;
+        document.getElementById('u-exp').innerText = u.expiry;
+    }
+
+    function processM3U(content) {
+        const lines = content.split('\n');
+        appState.groups = { "ALL CHANNELS": [] };
+        appState.order = ["ALL CHANNELS"];
+
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith("#EXTINF")) {
+                const url = lines[i+1]?.trim();
+                if(url && url.startsWith('http')) {
+                    const group = lines[i].match(/group-title="([^"]*)"/)?.[1] || "OTHERS";
+                    const name = lines[i].split(',')[1]?.trim() || "Channel";
+                    const logo = lines[i].match(/tvg-logo="([^"]*)"/)?.[1] || "https://i.ibb.co/rGPFbMs8/mitv.png";
+                    
+                    if(!appState.groups[group]) { appState.groups[group] = []; appState.order.push(group); }
+                    const item = { name, url, logo };
+                    appState.groups[group].push(item);
+                    appState.groups["ALL CHANNELS"].push(item);
+                }
+            }
+        }
+        renderFolders();
+    }
+
+    async function loadVOD() {
+        try {
+            const [m, s] = await Promise.all([
+                fetch(CONFIG.VOD).then(r => r.json()),
+                fetch(CONFIG.SER).then(r => r.json())
+            ]);
+            appState.movies = m; appState.series = s;
+        } catch(e){}
+    }
+
+    function renderFolders() {
+        const container = document.getElementById('main-content');
+        container.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in"></div>`;
+        const grid = container.firstChild;
+
+        appState.order.forEach(g => {
+            const div = document.createElement('div');
+            div.className = "folder-item";
+            div.innerHTML = `<i class="fas fa-folder text-red-600 text-3xl mb-3"></i><div class="text-[11px] font-bold uppercase truncate w-full">${g}</div>`;
+            div.onclick = () => { appState.activeGroup = g; renderChannels(g); };
+            grid.appendChild(div);
+        });
+    }
+
+    function renderChannels(gName) {
+        const container = document.getElementById('main-content');
+        container.innerHTML = `
+            <div class="back-btn" onclick="renderFolders()"><i class="fas fa-arrow-left"></i> BACK</div>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                ${appState.groups[gName].map(ch => `
+                    <div class="netflix-card" onclick="playSecure('${ch.url}')">
+                        <img src="${ch.logo}" class="card-img" onerror="this.src='https://i.ibb.co/rGPFbMs8/mitv.png'">
+                        <div class="card-label truncate">${ch.name}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // --- SEARCH LOGIC ---
+    function toggleSearch() {
+        const s = document.getElementById('search-container');
+        s.style.display = (s.style.display === 'block') ? 'none' : 'block';
+        if(s.style.display === 'block') document.getElementById('search-box').focus();
+    }
+
+    function handleSearch() {
+        const query = document.getElementById('search-box').value.toLowerCase();
+        const container = document.getElementById('main-content');
+        
+        if(appState.tab === 'tv') {
+            const filtered = appState.groups["ALL CHANNELS"].filter(ch => ch.name.toLowerCase().includes(query));
+            container.innerHTML = `<div class="grid grid-cols-3 gap-3">${filtered.map(ch => `
+                <div class="netflix-card" onclick="playSecure('${ch.url}')">
+                    <img src="${ch.logo}" class="card-img">
+                    <div class="card-label truncate">${ch.name}</div>
+                </div>`).join('')}</div>`;
+        } else if(appState.tab === 'mov') {
+            const filtered = appState.movies.filter(m => m.name.toLowerCase().includes(query));
+            renderMovies(filtered);
+        }
+    }
+
+    function playSecure(url) {
+        const p = appState.player;
+        // Forced Intent Logic
+        let intent = (p === 'vlc') 
+            ? `intent:${url}#Intent;package=org.videolan.vlc;type=video/*;S.title=MITV_PRO_STREAM;end`
+            : `intent:${url}#Intent;package=com.mxtech.videoplayer.ad;type=video/*;S.title=MITV_PRO_STREAM;end`;
+        window.location.href = intent;
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        document.querySelector('.fa-moon').className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    function logout() {
+        localStorage.removeItem('mitv_user_session');
+        location.reload();
+    }
+
+    function setTab(t) {
+        appState.tab = t;
+        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(`t-${t}`).classList.add('active');
+        if(t === 'tv') renderFolders();
+        else if(t === 'mov') renderMovies(appState.movies.slice(0,150));
+        else renderSeries();
+    }
+
+    function renderMovies(data) {
+        const container = document.getElementById('main-content');
+        container.innerHTML = `<div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+            ${data.map(m => `
+                <div class="netflix-card" onclick="playSecure('http://myott.to:8080/movie/03062015326/123456/${m.stream_id}.mp4')">
+                    <img src="${m.stream_icon}" class="card-img" onerror="this.src='https://placehold.co/400x600/111/fff?text=VOD'">
+                    <div class="card-label truncate">${m.name}</div>
+                </div>`).join('')}</div>`;
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        const ov = document.getElementById('overlay');
+        ov.style.display = (ov.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function updateSet() {
+        appState.player = document.getElementById('player-sel').value;
+        localStorage.setItem('mitv_player', appState.player);
+    }
+</script>
+</body>
+</html>

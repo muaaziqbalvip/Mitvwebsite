@@ -97,8 +97,29 @@
             box-shadow: 0 4px 15px rgba(56, 118, 29, 0.3);
         }
         
-        .cta-button:hover {
-            background-color: #4a912e; 
+        .live-but:hover {
+            background-color: #4b91e; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(48, 18, 29, 0.5);
+        }
+        .live-but {
+            display: inline-block;
+            background-color: red;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px; /* Pill shape for modern look */
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background-color blue, transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(56, 118, 29, 0.3);
+        }
+        
+        .live-but:hover {
+            background-color: #4b13e; 
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(56, 118, 29, 0.5);
         }
@@ -555,7 +576,8 @@
                 <div id="nav-wrapper">
                     <ul class="nav-links">
                         <li><a href="#home" data-section="home" class="active" onclick="navigate('home'); return false;">Home</a></li>
-                        <li><a href="#live-tv" data-section="live-tv" onclick="navigate('live-tv'); return false;">Live TV</a></li>
+                        <li><a href="ai.html" data-section="live-tv" onclick="ai.html">Live TV pro</a></li>
+                        <li><a href="#live-tv" data-section="live-tv" onclick="navigate('live-tv'); return false;">Live TV Free</a></li>
                         <li><a href="controll.html" data-section="controll" onclick="controll.html">Controll panell</a></a></li>
                         <li><a href="download.html" data-section="download" onclick="download.html">App download</a></a></li>
                         <li><a href="#plans" data-section="plans" onclick="navigate('plans'); return false;">Packages</a></li>
@@ -577,6 +599,8 @@
                 <div class="hero-text">
                     <h1>Witness the Future of <span>Digital Entertainment</span></h1>
                     <p>India aur Pakistan ke 150+ Channels Full HD mein, Jazz Free Data aur Replay feature ke saath!</p>
+                   <a href="ai.html"> <button class="live-but" onclick="ai.html">Start Watching Pro plus Tv
+                    📡😀😀😀😀😃📡</button></a>
                     <button class="cta-button" onclick="navigate('live-tv')">Start Watching Free Channels</button>
                 </div>
             </div>
@@ -1036,7 +1060,7 @@ https://ml-pull-dvc-myco.io:2096/HBO_2/index.m3u8
 #EXTINF:-1 tvg-id="mix.tv.in@SD" tvg-logo="https://myco.io/_next/image?url=https%3A%2F%2Fassets.myco.io%2Fpublic%2Fcompressed%2Fthumbnails%2F20251105%2Fmycolive-mix_1jpg-1762353499626.webp&w=750&q=30" group-title="Movies",Mix TV 
 https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8
 #EXTINF:-1 tvg-id="pbs.kids.in@SD" tvg-logo="https://static.wikia.nocookie.net/elinor-wonders-why/images/d/d9/PBS_Kids_Dash_%25_282009%25_29.png" group-title="Kids",PBS Kids (Pro)
-https://us.ml-pull-dvc-myco.io:2096/PBS_KIDS/index.m3u8
+http://163.61.227.29:8000/play/a01n
 #EXTINF:-1 tvg-id="" tvg-logo="https://i.scdn.co/image/ab67616d00001e02e65e1cc103ba5066d41f06fe" group-title="kids🎈",Motu patlo
 https://cloudfrontnet.vercel.app/tplay/playout/209622/master.m3u8
 #EXTINF:-1 tvg-id="" tvg-logo="https://yt3.googleusercontent.com/3TuuHz-v_4DUoONsjOV7Ohly4LNUMkTnhmdMtZJO_vxwd50mXWJlL1oyPOd4IDaSUiVaAsUpbHw=s900-c-k-c0x00ffffff-no-rj" group-title="kids🎈",The jungle book
